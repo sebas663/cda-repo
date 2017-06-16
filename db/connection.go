@@ -48,4 +48,5 @@ func collection(typeDoc uint8) *mgo.Collection {
 	if typeDoc == 11 {
 		return laboratorios()
 	}
+	return nil
 }

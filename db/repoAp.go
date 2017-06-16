@@ -1,7 +1,7 @@
 package db
 
 import (
-	"time"
+	"encoding/json"
 
 	m "../models"
 	"gopkg.in/mgo.v2/bson"
@@ -18,68 +18,22 @@ func GetAll(typeDoc uint8) ([]m.CdaContainer, error) {
 	return res, nil
 }
 
-// FindByDocumentID returns a single CdaContainer from the database.
-func FindByDocumentID(mapa map[string]interface{}) ([]m.CdaContainer, error) {
+// FindByQuery returns a single CdaContainer from the database.
+func FindByQuery(typeDoc uint8, queryJSON string) ([]m.CdaContainer, error) {
 	res := []m.CdaContainer{}
-	documentID := mapa["documentID"]
-	typeDoc := mapa["typeDoc"]
-	query := mapa["query"]
-	/*query := bson.M{
-		"documentID":  documentID,
-		"episodeType": bson.M{"$ne": "H"},
-	}*/
-	if err := collection(typeDoc).Find(query).All(&res); err != nil {
+
+	var queryBson bson.M
+
+	json.Unmarshal([]byte(queryJSON), &queryBson)
+
+	if err := collection(typeDoc).Find(queryBson).All(&res); err != nil {
 		return nil, err
 	}
 
 	return res, nil
 }
 
-// FindByDocumentName returns a single CdaContainer from the database.
-func FindByDocumentName(id string) (*m.CdaContainer, error) {
-	res := m.CdaContainer{}
-
-	if err := collection(typeDoc).FindId(bson.ObjectIdHex(id)).One(&res); err != nil {
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-// FindByEpisodeNumber returns a single CdaContainer from the database.
-func FindByEpisodeNumber(id uint32) (*m.CdaContainer, error) {
-	res := m.CdaContainer{}
-
-	if err := collection(typeDoc).FindId(bson.ObjectIdHex(id)).One(&res); err != nil {
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-// FindByReportDate returns a single CdaContainer from the database.
-func FindByReportDate(from time.Time, to time.Time) (*m.CdaContainer, error) {
-	res := m.CdaContainer{}
-
-	if err := collection(typeDoc).FindId(bson.ObjectIdHex(id)).One(&res); err != nil {
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-// FindByNhc returns a single CdaContainer from the database.
-func FindByNhc(nhc uint32) (*m.CdaContainer, error) {
-	res := m.CdaContainer{}
-
-	if err := collection(typeDoc).FindId(bson.ObjectIdHex(id)).One(&res); err != nil {
-		return nil, err
-	}
-
-	return &res, nil
-}
-
 // Save inserts an CdaContainer to the database.
-func Save(a m.CdaContainer) error {
+func Save(a m.CdaContainer, typeDoc uint8) error {
 	return collection(typeDoc).Insert(a)
 }
