@@ -13,6 +13,4 @@ type (
 		Nhc           uint32    `json:"nhc"`
 		DocumentType  uint8     `json:"documentType"`
 	}
-	//FilterDBs array.
-	FilterDBs []FilterDB
 )
